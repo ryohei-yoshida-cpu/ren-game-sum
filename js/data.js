@@ -117,25 +117,30 @@
     tri: 'M50 14 L86 80 L14 80 Z',
   };
 
-  // ボス（どの だんも 5もんめ と 10もんめ の あとに でてくる）
+  // ボス（1もんめから でてきて、こたえを あてると こうげきされて にげる。5もんめ と 10もんめ の あとは しょうぶ）
+  //   まちがえると ボスに こうげきされて、すらいむの HP が へる（10かいで まけ）
   //   5もんめ: ゴロゴロン（きすうの だん）/ オバケン（ぐうすうの だん）。3かい なぞる
   //   10もんめ: ドラゴラン（10の だんだけ まおうスライム）。5かい なぞる
   const BOSSES = {
     rock: {
       name: 'ゴロゴロン', color: '#a3acb8', deco: 'rock',
       enter: 'ゴロゴロ〜！ ここは とおさないぞ！', ouch: ['いてっ！', 'ゴロッ！？'], lose: 'まいった〜！ ゴロゴロ〜',
+      atk: ['ゴロゴロ アタック！', 'えいっ ゴロン！'], flee: ['おぼえてろ〜！', 'ゴロゴロ〜 にげろ〜！'], win: 'ゴロゴロ〜 おれの かちだ！',
     },
     ghost: {
       name: 'オバケン', color: '#cfc6ff', deco: 'ghost',
       enter: 'ひゅ〜 どろどろ〜！ おどろいたか〜！', ouch: ['ひゃっ！', 'ひゅっ！？', 'うひゃ〜！'], lose: 'ひゅ〜… まいった〜！',
+      atk: ['ばあっ！', 'おどかし アタック〜！'], flee: ['ひゅ〜 にげろ〜！', 'また くるぞ〜！'], win: 'ひゅ〜どろどろ〜 オバケンの かち〜！',
     },
     dragon: {
       name: 'ドラゴラン', color: '#5fcf7a', deco: 'dragon',
       enter: 'ガオー！ おれさまは つよいぞ！', ouch: ['いてて！', 'ガオッ！？', 'やるな！'], lose: 'ガオ〜ん… まいった〜！',
+      atk: ['ガオー！ ひのいき！', 'しっぽ アタック！'], flee: ['いったん ひきあげだ！', 'つぎは まけないぞ！'], win: 'ガオー！ おれさまの かちだ！',
     },
     king: {
       name: 'まおうスライム', color: '#9a6be0', deco: 'king',
       enter: 'ふっふっふ… わがはいが まおうスライムだ！', ouch: ['ぐぬっ！', 'いたた！', 'なにっ！？', 'まだまだ！', 'ぐぬぬ…！'], lose: 'うわ〜！ まいった〜！ なかよく しよう〜！',
+      atk: ['まおう パンチ！', 'まおう ビーム！'], flee: ['きょうは このくらいに してやる！', 'ぐぬぬ… おぼえておれ！'], win: 'ふっふっふ… わがはいの かちだ！',
     },
   };
   const BOSS_AT = [5, 10];   // なんもんめの あとに でるか
@@ -162,14 +167,14 @@
   const add = (who, text) => { if (!LINES.some(l => l.who === who && l.text === text)) LINES.push({ who, text }); };
   for (let i = 1; i <= 20; i++) add('narr', NUM[i]);
   ['たす', 'は？', 'すらいむ たしたし', 'もういちど きいてね', ...PRAISE,
-    'クリア！', 'あたらしい ぶきを てにいれた！', 'ボスが あらわれた！', 'せんを なぞって こうげきだ！', 'やっつけた！',
+    'クリア！', 'あたらしい ぶきを てにいれた！', 'ボスが あらわれた！', 'しょうぶだ！', 'やられちゃった… もういちど がんばろう！', 'せんを なぞって こうげきだ！', 'やっつけた！',
     'ぜんぶ クリア！ すらいむ マスターだ！', 'きょうも がんばったね。また あしたね！']
     .forEach(t => add('narr', t));
   STAGES.forEach(s => add('narr', `${NUM[s.n]}の だん`));
   WEAPONS.forEach(w => add('narr', w.name));
   Object.values(BOSSES).forEach(b => add('narr', b.name));
   ['ぷにっ', 'わーい！', ...SLIME_CRY].forEach(t => add('slime', t));
-  Object.values(BOSSES).forEach(b => [b.enter, ...b.ouch, b.lose].forEach(t => add('boss', t)));
+  Object.values(BOSSES).forEach(b => [b.enter, ...b.atk, ...b.flee, ...b.ouch, b.lose, b.win].forEach(t => add('boss', t)));
 
   Object.assign(window, { NUM, STAGES, WEAPONS, PATHS, BOSSES, BOSS_AT, bossFor, PRAISE, SLIME_CRY, LINES });
 })();

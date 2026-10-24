@@ -208,12 +208,48 @@ button { font-family: inherit; color: inherit; cursor: pointer; }
 }
 .group .slime { width: var(--sz); height: var(--sz); }
 .group-a { border-right: 3px dashed rgba(61, 51, 80, .08); }
+/* ボスの いる ところ（フィールドの うえ） */
+.field { --lane: 96px; padding-top: var(--lane); }
+.foe { position: absolute; left: calc(50% - 44px); top: 4px; width: 88px; height: 88px; z-index: 3; pointer-events: none; display: none; }
+.foe.show { display: block; }
+.foe .slime { width: 100%; height: 100%; }
+.foe.in .sl-in { animation: foeIn .8s cubic-bezier(.3, 1.5, .5, 1) both; }
+@keyframes foeIn { 0% { transform: translateX(260%) translateY(-40%) rotate(30deg); } 70% { transform: translateX(-8%) scale(1.1, .9); } 100% { transform: none; } }
+.foe.idle .sl-in { animation: foeIdle 1.4s ease-in-out infinite; }
+@keyframes foeIdle { 0%, 100% { transform: none; } 50% { transform: translateY(-6%) rotate(-4deg); } }
+.foe.atk .sl-in { animation: foeAtk .8s ease-in-out; }
+@keyframes foeAtk { 0% { transform: none; } 30% { transform: translateY(-14%) scale(.9, 1.1); } 55% { transform: translateY(150%) scale(1.35); } 100% { transform: none; } }
+.foe.hit .sl-in { animation: ouch .5s; filter: brightness(1.7); }
+.foe.flee .sl-in { animation: foeFlee .9s ease-in forwards; }
+@keyframes foeFlee { 0% { transform: none; } 25% { transform: translateY(-10%) scaleX(-1); } 100% { transform: translateX(320%) translateY(-30%) scaleX(-1) rotate(-20deg); } }
+.field.hurt { animation: fieldHurt .5s; }
+.field.hurt::after { content: ''; position: absolute; inset: 0; border-radius: 24px; background: rgba(255, 60, 60, .22); pointer-events: none; z-index: 4; }
+@keyframes fieldHurt { 0%, 100% { transform: none; } 20% { transform: translateX(-10px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(4px); } }
+.my-hp { display: flex; align-items: center; gap: 6px; width: 100%; max-width: 760px; margin-top: 6px; }
+.my-hp .hp-ic { font-size: 20px; font-style: normal; }
+.hp-bar { flex: 1; display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; max-width: 320px; }
+.hp-bar i { height: 14px; border-radius: 7px; background: linear-gradient(180deg, #7ee08a, #3fbf55); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .12); transition: .3s; }
+.hp-bar.low i { background: linear-gradient(180deg, #ffd166, #f4a61d); }
+.hp-bar.danger i { background: linear-gradient(180deg, #ff8a8a, #e94b4b); }
+.hp-bar i.gone { background: #e1e5ec; box-shadow: none; transform: scaleY(.6); }
+.hp-bar i.break { animation: hpBreak .5s; }
+@keyframes hpBreak { 0% { transform: scale(1.5); background: #fff; } 100% { transform: scaleY(.6); } }
+.lose-title { font-size: clamp(28px, 8vw, 38px); font-weight: 900; color: #7d8aa3; }
+.lose-scene { display: flex; align-items: flex-end; gap: 16px; }
+.lose-scene .slime { width: 90px; height: 90px; }
+.lose-scene .lose-sl .sl-in { transform: scale(1.25, .6); transform-origin: 50% 100%; filter: grayscale(.4); }
+.lose-scene .lose-sl .sl-skin { animation: none; }
+.lose-scene .win-boss { width: 120px; height: 120px; }
+.lose-scene .win-boss .sl-in { animation: happy .6s ease-in-out infinite; }
+.lose-text { margin: 0; font-size: 17px; font-weight: 700; line-height: 1.6; }
 .merged {
-  position: absolute; left: 50%; top: 55%; transform: translate(-50%, -50%);
+  position: absolute; left: 50%; top: calc(var(--lane) + (100% - var(--lane)) * .5); transform: translate(-50%, -50%);
   display: none; flex-direction: column; align-items: center; z-index: 2; pointer-events: none;
 }
 .merged.on { display: flex; }
-.merged .slime.big { width: 60px; height: 60px; transition: width .2s cubic-bezier(.3, 1.6, .5, 1), height .2s cubic-bezier(.3, 1.6, .5, 1); }
+.merged .slime.big { width: 60px; height: 60px; transition: width .2s cubic-bezier(.3, 1.6, .5, 1), height .2s cubic-bezier(.3, 1.6, .5, 1), transform .3s cubic-bezier(.4, 1.4, .5, 1); }
+.merged.attack .slime.big { transform: translateY(var(--ady, -120px)) scale(.8); }
+.merged.attack.swing .sl-wp { animation: swing .35s ease-out forwards; }
 .m-num {
   margin-top: -6px; min-width: 1.6em; padding: 0 .3em; border-radius: 999px; background: #fff; text-align: center;
   font-size: 30px; font-weight: 900; color: var(--accent); line-height: 1.3;

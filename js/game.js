@@ -5,6 +5,8 @@
   const $ = s => document.querySelector(s);
   const { NUM, STAGES, WEAPONS, PATHS, BOSS_AT, bossFor, PRAISE, SLIME_CRY, Sound, Slime } = window;
   const QUESTIONS = 10;    // 1の だんは 1+1 〜 1+10
+  const MAX_HP = 10;       // ボスに 10かい こうげき されたら まけ
+  const LANE = 96;         // フィールドの うえの ボスの いる ところ（css の --lane）
   // リズム（びょう）。こどもが「いち、に、さん」と かぞえられる はやさ
   const HIT = 0.55;        // 「たったった」の 1つぶん
   const GAP = 0.75;        // 「1」「たす」「1」「は？」の あいだ
@@ -106,12 +108,18 @@
   let qi = 0;         // なんもんめ（0〜9）
   let q = null;       // { a, b, ans, choices }
   let locked = true;
+  let myHp = MAX_HP;  // すらいむの HP（その だんを クリアするまで へった まま）
+  let foe = null;     // いま でている ボス（1〜5もんめ と 6〜10もんめ で かわる）
 
   function startStage(n) {
     epoch++;
     Sound.hush();
     stage = n;
     qi = 0;
+    myHp = MAX_HP;
+    foe = null;
+    $('#foe').className = 'foe';
+    renderMyHP();
     const st = stageOf(n);
     document.documentElement.style.setProperty('--stage', st.color);
     $('#stage-label').textContent = `${n}の だん`;
@@ -155,17 +163,48 @@
     return shuffle([...opts]);
   }
 
+  function renderMyHP(broke = -1) {
+    const bar = `<div class="hp-bar${myHp <= 3 ? ' danger' : myHp <= 6 ? ' low' : ''}">` +
+      Array.from({ length: MAX_HP }, (_, i) => `<i class="${i < myHp ? '' : 'gone'}${i === broke ? ' break' : ''}"></i>`).join('') + '</div>';
+    $('#my-hp').innerHTML = `<i class="hp-ic">❤️</i>${bar}`;
+  }
+
+  // ボスを だす（はじめて でる ときは なまえと セリフ）
+  function foeIn(def) {
+    const el = $('#foe');
+    el.innerHTML = Slime.bossHTML(def);
+    el.className = 'foe show in';
+    setTimeout(() => { if (el.classList.contains('in')) el.className = 'foe show idle'; }, 800);
+  }
+
   function nextQuestion() {
     const a = stage, b = qi + 1;
     q = { a, b, ans: a + b, choices: makeChoices(a + b) };
     renderProgress();
+    if (!foe) {
+      // 1もんめ と 6もんめ: あたらしい ボスが あらわれる
+      foe = bossFor(stage, qi < 5 ? 5 : 10);
+      resetField();
+      $('#choices').innerHTML = '';
+      foeIn(foe);
+      Sound.rumble();
+      Sound.roll(0.3, 0.5);
+      Sound.say('ボスが あらわれた！');
+      Sound.say(foe.name);
+      Sound.say(foe.enter, { who: 'boss' });
+      guard(wait(3600).then(present));
+      return;
+    }
+    // にげた ボスが また もどってくる
+    foeIn(foe);
+    Sound.puni(0, 0);
     present();
   }
 
   // すらいむの おおきさ（かずが おおいと ちいさく）
   function slimeSize() {
     const f = $('#field');
-    const w = f.clientWidth / 2, h = f.clientHeight;
+    const w = f.clientWidth / 2, h = f.clientHeight - LANE;
     const n = Math.max(q.a, q.b);
     // いちばん おおきく ならべられる れつの かずを さがす
     let best = 0;
@@ -246,11 +285,13 @@
   function answer(v, btn) {
     if (locked) return;
     if (v !== q.ans) {
-      // しっぱいは じみに: ブブー と ならべかえ だけ
+      // まちがえると ボスに こうげき される
       locked = true;
       Sound.buzz();
       btn.classList.add('no');
-      later(0.65, () => {
+      foeAttack();
+      if (myHp <= 0) return;
+      later(1.1, () => {
         const before = q.choices.join();
         do shuffle(q.choices); while (q.choices.join() === before);
         const box = $('#choices');
@@ -279,9 +320,9 @@
     const base = Math.max(56, parseFloat(field.style.getPropertyValue('--sz')) || 60);
     const maxSz = Math.min(fr.width * 0.62, fr.height * 0.95);
     const sizeOf = k => Math.min(maxSz, base * (0.9 + Math.sqrt(k) * 0.62));
-    m.innerHTML = Slime.html(color, weapon(), 'big') + '<b class="m-num"></b>';
+    m.innerHTML = Slime.html(color, weapon() || 1, 'big') + '<b class="m-num"></b>';
     const big = m.querySelector('.slime');
-    const cx = fr.width / 2, cy = fr.height * 0.55;
+    const cx = fr.width / 2, cy = LANE + (fr.height - LANE) / 2;
     all.forEach((s, k) => {
       const sec = k * MERGE;
       Sound.snare(sec, { vol: 0.9 + k * 0.012 });
@@ -315,11 +356,13 @@
       Sound.say(NUM[q.ans]);
       Sound.say(pick(PRAISE));
     }
-    await wait(1700);
+    await wait(1500);
+    // がったいした すらいむが ぶきで ボスを こうげき
+    const battle = BOSS_AT.includes(qi + 1);
+    await slimeAttack(battle);
     qi++;
     renderProgress();
-    if (BOSS_AT.includes(qi)) {
-      await wait(400);
+    if (battle) {
       startBoss();
     } else if (qi < QUESTIONS) {
       nextQuestion();
@@ -328,6 +371,75 @@
       clearStage();
     }
   }
+
+  // せいかいの あと: がったいした すらいむが ボスに とびかかる。ふつうは ボスが にげる / battle なら しょうぶへ
+  async function slimeAttack(battle) {
+    const m = $('#merged'), el = $('#foe');
+    const big = m.querySelector('.slime');
+    if (!big || !foe) return;
+    const br = big.getBoundingClientRect(), fr = el.getBoundingClientRect();
+    m.style.setProperty('--ady', `${fr.bottom - br.top - br.height * 0.15}px`);
+    m.classList.add('attack');
+    Sound.say(pick(SLIME_CRY), { who: 'slime', now: true });
+    Sound.swing(0.15);
+    await wait(320);
+    m.classList.add('swing');
+    Sound.snare(0, { vol: 1.3 });
+    Sound.boom(0.02);
+    el.className = 'foe show hit';
+    await wait(700);
+    m.classList.remove('attack', 'swing');
+    if (battle) {
+      Sound.say('しょうぶだ！');
+      el.className = 'foe show idle';
+      await wait(1300);
+      return;
+    }
+    el.className = 'foe show flee';
+    Sound.say(pick(foe.flee), { who: 'boss' });
+    Sound.swing(0.1);
+    await wait(1100);
+    el.className = 'foe';
+  }
+
+  // まちがい: ボスが すらいむに こうげき → HP が へる
+  function foeAttack() {
+    const el = $('#foe'), field = $('#field');
+    if (foe) {
+      el.className = 'foe show atk';
+      Sound.say(pick(foe.atk), { who: 'boss', now: true });
+    }
+    Sound.swing(0.15);
+    later(0.42, () => {
+      Sound.hurt();
+      field.classList.remove('hurt');
+      void field.offsetWidth;
+      field.classList.add('hurt');
+      document.querySelectorAll('.group .slime').forEach(s => {
+        s.classList.remove('boing');
+        void s.offsetWidth;
+        s.classList.add('boing');
+      });
+    });
+    later(0.9, () => { if (foe) el.className = 'foe show idle'; field.classList.remove('hurt'); });
+    myHp = Math.max(0, myHp - 1);
+    later(0.42, () => renderMyHP(myHp));
+    if (myHp <= 0) guard(wait(1300).then(lose));
+  }
+
+  // HP が なくなった: その だんの さいしょから
+  function lose() {
+    epoch++;
+    locked = true;
+    $('#overlay-lose .lose-scene').innerHTML =
+      Slime.html(stageOf(stage).color, 0, 'lose-sl') + (foe ? Slime.bossHTML(foe).replace('class="slime boss-slime"', 'class="slime boss-slime win-boss"') : '');
+    overlay('#overlay-lose', true);
+    Sound.lose();
+    if (foe) Sound.say(foe.win, { who: 'boss' });
+    Sound.say('やられちゃった… もういちど がんばろう！');
+  }
+  $('#btn-retry').onclick = () => { overlay('#overlay-lose', false); startStage(stage); };
+  $('#btn-lose-home').onclick = () => { overlay('#overlay-lose', false); goHome(false); };
 
   // ---------- ボス ----------
   let boss = null;    // { def, hp, pi }
@@ -344,7 +456,7 @@
 
   async function startBoss() {
     epoch++;
-    const def = bossFor(stage, qi);
+    const def = foe || bossFor(stage, qi);
     boss = { def, hp: def.hits, pi: 0 };
     $('#boss-label').textContent = def.name;
     renderHP();
@@ -354,15 +466,12 @@
     $('#hero').className = 'hero';
     $('#arena-fx').innerHTML = '';
     hideTrace();
-    $('#boss-msg').textContent = 'ボスが あらわれた！';
+    $('#boss-msg').textContent = 'しょうぶだ！';
     show('screen-boss');
     Sound.rumble();
     Sound.roll(0.4, 0.6);
     await guard((async () => {
-      Sound.say('ボスが あらわれた！');
-      Sound.say(def.name);
-      Sound.say(def.enter, { who: 'boss' });
-      await wait(2600);
+      await wait(1600);
       $('#boss').className = 'boss';
       $('#boss-msg').textContent = 'せんを なぞって こうげきだ！';
       Sound.say('せんを なぞって こうげきだ！');
@@ -507,7 +616,8 @@
     Sound.say('わーい！', { who: 'slime' });
     await wait(1800);
     if (qi < QUESTIONS) {
-      // つぎの もんだいへ
+      // つぎの もんだいへ（6もんめからは つぎの ボス）
+      foe = null;
       show('screen-play');
       nextQuestion();
     } else {
@@ -561,7 +671,7 @@
     epoch++;
     if (!fromButton) Sound.hush();
     hideTrace();
-    ['#overlay-clear', '#overlay-weapons', '#overlay-adult', '#overlay-cloud'].forEach(id => overlay(id, false));
+    ['#overlay-clear', '#overlay-lose', '#overlay-weapons', '#overlay-adult', '#overlay-cloud'].forEach(id => overlay(id, false));
     renderTitle();
     show('screen-title');
     if (history.state && history.state.play) history.back();
@@ -575,6 +685,7 @@
       Sound.hush();
       hideTrace();
       overlay('#overlay-clear', false);
+      overlay('#overlay-lose', false);
       renderTitle();
       show('screen-title');
     }
@@ -700,7 +811,8 @@
   window.__game = {
     get save() { return save; },
     get q() { return q; },
-    startStage, startBoss: (n, qn = 10) => { stage = n; qi = qn; startBoss(); }, clearStage: n => { stage = n; clearStage(); },
+    startStage, startBoss: (n, qn = 10) => { stage = n; qi = qn; foe = null; startBoss(); },
+    get hp() { return myHp; }, clearStage: n => { stage = n; clearStage(); },
     trace: () => tr,
   };
 

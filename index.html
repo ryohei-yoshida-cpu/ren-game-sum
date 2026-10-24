@@ -63,6 +63,7 @@
         <div id="stage-label" class="stage-label"></div>
         <div id="progress" class="progress"></div>
       </header>
+      <div id="my-hp" class="my-hp" aria-label="すらいむの HP"></div>
       <div id="equation" class="equation">
         <div class="eq-slot eq-a"><b></b></div>
         <div class="eq-slot eq-plus"><b>＋</b><small>たす</small></div>
@@ -73,6 +74,7 @@
       <div id="field" class="field">
         <div class="group group-a"></div>
         <div class="group group-b"></div>
+        <div id="foe" class="foe"></div>
         <div id="merged" class="merged"></div>
         <button id="btn-start" class="btn btn-go btn-big start">▶ スタート</button>
       </div>
@@ -116,6 +118,19 @@
         <div class="ask-btns">
           <button id="btn-next" class="btn btn-go btn-big">つぎの だんへ ▶</button>
           <button id="btn-stop" class="btn btn-soft">🏠 おうちへ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- まけちゃった -->
+    <div id="overlay-lose" class="overlay">
+      <div class="panel">
+        <div class="lose-title">やられちゃった…</div>
+        <div class="lose-scene"></div>
+        <p class="lose-text">ボスに 10かい こうげき されちゃった。<br>もういちど がんばろう！</p>
+        <div class="ask-btns">
+          <button id="btn-retry" class="btn btn-go btn-big">もういちど ちょうせん！</button>
+          <button id="btn-lose-home" class="btn btn-soft">🏠 おうちへ</button>
         </div>
       </div>
     </div>

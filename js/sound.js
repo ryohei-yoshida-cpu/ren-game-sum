@@ -306,6 +306,17 @@ window.Sound = (() => {
       noise(t, 1.2, { vol: 0.4, type: 'lowpass', freq: 220 });
       tone(55, 0, 1.2, { type: 'sawtooth', vol: 0.08, t0: t });
     },
+    // ボスに こうげきされた
+    hurt(sec = 0) {
+      const t = at(sec);
+      tone(320, 0, 0.35, { type: 'square', vol: 0.12, slide: 0.35, t0: t });
+      noise(t, 0.2, { vol: 0.5, type: 'lowpass', freq: 700 });
+      kick(sec, 0.9);
+    },
+    // まけちゃった
+    lose(sec = 0) {
+      [67, 66, 65, 64].forEach((m, i) => tone(midi(m), sec + i * 0.38, i === 3 ? 1.0 : 0.34, { type: 'triangle', vol: 0.14, slide: i === 3 ? 0.9 : 0 }));
+    },
     poof(sec = 0) {
       const t = at(sec);
       noise(t, 0.5, { vol: 0.3, type: 'bandpass', freq: 3000, to: 300, q: 1 });
