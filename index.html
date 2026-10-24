@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="すらいむたしたし">
+  <meta name="theme-color" content="#eaf7ff">
+  <title>すらいむ たしたし</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ぶきの いろ -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="wp-silver" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9aa8b8"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#8d9bab"/></linearGradient>
+      <linearGradient id="wp-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6b0"/><stop offset=".45" stop-color="#ffc928"/><stop offset="1" stop-color="#c48a00"/></linearGradient>
+      <linearGradient id="wp-ice" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#9be7ff"/><stop offset="1" stop-color="#3aa0d8"/></linearGradient>
+      <linearGradient id="wp-fire" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff3d00"/><stop offset=".55" stop-color="#ff9500"/><stop offset="1" stop-color="#ffe066"/></linearGradient>
+      <linearGradient id="wp-rainbow" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ff5e5e"/><stop offset=".17" stop-color="#ffa94d"/><stop offset=".33" stop-color="#ffe14d"/>
+        <stop offset=".5" stop-color="#6ee07a"/><stop offset=".67" stop-color="#4dc3ff"/><stop offset=".83" stop-color="#6b7bff"/><stop offset="1" stop-color="#d36bff"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div id="app">
+
+    <!-- タイトル -->
+    <section id="screen-title" class="screen active">
+      <h1 class="logo">
+        <span class="logo-main">すらいむ<br>たしたし</span>
+      </h1>
+      <div id="title-slimes" class="title-slimes" aria-hidden="true"></div>
+
+      <button id="btn-play" class="btn btn-go btn-big">あそぶ！</button>
+
+      <div id="stage-map" class="stage-map"></div>
+
+      <button id="btn-install" class="btn btn-soft" hidden>📲 ホームがめんに ついか</button>
+
+      <div class="title-foot">
+        <div class="title-foot-row">
+          <button id="btn-weapons" class="btn btn-soft">🗡 ぶき <span id="weapon-count"></span></button>
+          <button id="btn-studio" class="btn btn-soft">🎙 こえ</button>
+          <button id="btn-cloud" class="btn btn-soft">☁️ きょうゆう</button>
+        </div>
+        <button id="btn-adult" class="btn-tiny">⚙️ おとなよう</button>
+      </div>
+    </section>
+
+    <!-- たしざん -->
+    <section id="screen-play" class="screen">
+      <header class="topbar">
+        <button id="btn-home" class="btn-icon" aria-label="おうち">🏠</button>
+        <div id="stage-label" class="stage-label"></div>
+        <div id="progress" class="progress"></div>
+      </header>
+      <div id="equation" class="equation">
+        <div class="eq-slot eq-a"><b></b></div>
+        <div class="eq-slot eq-plus"><b>＋</b><small>たす</small></div>
+        <div class="eq-slot eq-b"><b></b></div>
+        <div class="eq-slot eq-ha"><b>＝</b><small>は？</small></div>
+        <div class="eq-slot eq-ans"><b>？</b></div>
+      </div>
+      <div id="field" class="field">
+        <div class="group group-a"></div>
+        <div class="group group-b"></div>
+        <div id="merged" class="merged"></div>
+        <button id="btn-start" class="btn btn-go btn-big start">▶ スタート</button>
+      </div>
+      <div id="choices" class="choices"></div>
+      <button id="btn-again" class="btn-tiny again" hidden>🔁 もういちど きく</button>
+    </section>
+
+    <!-- ボス -->
+    <section id="screen-boss" class="screen">
+      <header class="topbar">
+        <button id="btn-home2" class="btn-icon" aria-label="おうち">🏠</button>
+        <div id="boss-label" class="stage-label"></div>
+        <div id="boss-hp" class="boss-hp"></div>
+      </header>
+      <div id="arena" class="arena">
+        <div id="boss" class="boss"></div>
+        <div id="hero" class="hero"></div>
+        <svg id="trace" class="trace" viewBox="0 0 100 100" aria-hidden="true">
+          <path class="tr-band"/>
+          <path class="tr-dash"/>
+          <path class="tr-ink"/>
+          <circle class="tr-dot" r="4"/>
+          <g class="tr-start"><circle r="7"/><text y="2.6">ここ</text></g>
+          <text class="tr-goal">⭐</text>
+        </svg>
+        <div id="arena-fx" class="arena-fx"></div>
+      </div>
+      <div id="boss-msg" class="boss-msg"></div>
+    </section>
+
+    <!-- だん クリア -->
+    <div id="overlay-clear" class="overlay">
+      <div class="confetti"></div>
+      <div class="panel">
+        <div class="clear-title"></div>
+        <div class="reward">
+          <div class="reward-lead"></div>
+          <div class="reward-slime"></div>
+          <div class="reward-name"></div>
+        </div>
+        <div class="ask-btns">
+          <button id="btn-next" class="btn btn-go btn-big">つぎの だんへ ▶</button>
+          <button id="btn-stop" class="btn btn-soft">🏠 おうちへ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🗡 ぶき えらび -->
+    <div id="overlay-weapons" class="overlay">
+      <div class="panel panel-wide">
+        <div class="zukan-title">🗡 ぶき</div>
+        <p class="forms-lead">すらいむに もたせる ぶきを えらんでね。だんを クリアすると あたらしい ぶきが もらえるよ</p>
+        <div id="weapon-grid" class="weapon-grid"></div>
+        <button id="btn-weapons-close" class="btn btn-soft">とじる</button>
+      </div>
+    </div>
+
+    <!-- ⚙️ おとなよう -->
+    <div id="overlay-adult" class="overlay">
+      <div class="panel adult">
+        <div class="studio-head">
+          <div class="studio-title">⚙️ おとなよう</div>
+          <button id="adult-close" class="btn-icon" aria-label="とじる">✕</button>
+        </div>
+        <div id="adult-gate" class="cloud-box">
+          <div class="cloud-label">おとなの ひと だけ。こたえを いれてね</div>
+          <div class="adult-q"><span id="adult-q"></span> = <input id="adult-a" class="cloud-input" inputmode="numeric" autocomplete="off"></div>
+          <button id="adult-ok" class="btn btn-go">ひらく</button>
+        </div>
+        <div id="adult-body" class="adult-body" hidden>
+          <div class="cloud-box">
+            <div class="cloud-label">すすみぐあい（えらんだ だんから あそべるように します）</div>
+            <div id="adult-now" class="adult-now"></div>
+            <div id="adult-map" class="adult-map"></div>
+            <p class="cloud-note">まえの だんは ぜんぶ クリア（⭐）に なり、ぶきも もらえます。あとの だんは まだに なります。</p>
+          </div>
+          <div class="cloud-box">
+            <label class="studio-use"><input type="checkbox" id="adult-voice"> かずを こえで よむ</label>
+          </div>
+          <div class="cloud-box">
+            <button id="btn-reset" class="btn btn-soft">さいしょから（ぜんぶ けす）</button>
+          </div>
+        </div>
+        <p id="adult-msg" class="studio-msg" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <!-- ☁️ データ きょうゆう -->
+    <div id="overlay-cloud" class="overlay">
+      <div class="panel cloud">
+        <div class="studio-head">
+          <div class="studio-title">☁️ データ きょうゆう</div>
+          <button id="cloud-close" class="btn-icon" aria-label="とじる">✕</button>
+        </div>
+        <p class="cloud-lead">ID を いれると、すすみぐあい・ぶき・とった こえを ウェブに ほぞんします。<br>
+          ほかの スマホで おなじ ID を いれると、おなじ データで あそべます。</p>
+        <div id="cloud-setup" class="cloud-box" hidden>
+          まだ セットアップが できていません（おとなよう）。<br>README の「データを ほかの スマホと きょうゆう する」を みてね。
+        </div>
+        <div id="cloud-form" class="cloud-box" hidden>
+          <label class="cloud-label" for="cloud-id">ID（8もじ いじょう・えいすうじと -）</label>
+          <input id="cloud-id" class="cloud-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="puni-ab12-cd34">
+          <div class="cloud-btns">
+            <button id="cloud-connect" class="btn btn-go">つなぐ</button>
+            <button id="cloud-new" class="btn btn-soft">ID を つくる</button>
+          </div>
+          <p class="cloud-note">はじめての ときは「ID を つくる」→「つなぐ」。ほかの スマホでは その ID を いれて「つなぐ」。</p>
+        </div>
+        <div id="cloud-linked" class="cloud-box" hidden>
+          <div class="cloud-label">つながっている ID</div>
+          <div class="cloud-id-now"><span id="cloud-id-now"></span> <button id="cloud-copy" class="btn-tiny">コピー</button></div>
+          <div id="cloud-state" class="cloud-state"></div>
+          <div id="cloud-choice" class="cloud-choice" hidden>
+            <div class="cloud-compare">
+              <div><span class="cloud-label">📱 この スマホ</span><b id="cloud-here"></b></div>
+              <div><span class="cloud-label">☁️ ウェブ</span><b id="cloud-web"></b></div>
+            </div>
+            <button id="cloud-merge" class="btn btn-go cloud-pick">🔀 まぜる（おすすめ）<small>りょうほうの すすみぐあいを たしざん</small></button>
+            <button id="cloud-pull" class="btn btn-soft cloud-pick">⬇️ うけいれる<small>ウェブの データを この スマホに いれる</small></button>
+            <button id="cloud-push" class="btn btn-soft cloud-pick">⬆️ こうしんする<small>この スマホの データで ウェブを うわがき</small></button>
+            <button id="cloud-cancel" class="btn-tiny">やめる</button>
+          </div>
+          <div id="cloud-btns-linked" class="cloud-btns">
+            <button id="cloud-sync" class="btn btn-go">いま どうきする</button>
+            <button id="cloud-unlink" class="btn btn-soft">きょうゆうを やめる</button>
+          </div>
+        </div>
+        <p id="cloud-msg" class="studio-msg" aria-live="polite"></p>
+        <p class="cloud-note">⚠️ ID を しっている ひとは だれでも データを みたり かえたり できます。かぞく だけの ひみつに してね。</p>
+      </div>
+    </div>
+
+    <!-- 🎙 こえの スタジオ -->
+    <div id="overlay-studio" class="overlay">
+      <div class="panel panel-wide studio">
+        <div class="studio-head">
+          <div class="studio-title">🎙 こえの スタジオ</div>
+          <button id="studio-close" class="btn-icon" aria-label="とじる">✕</button>
+        </div>
+        <div id="studio-request" class="studio-request" hidden></div>
+        <div class="studio-me">
+          <label>なまえ <input id="studio-name" maxlength="12" placeholder="パパ"></label>
+          <label class="studio-use"><input type="checkbox" id="studio-use"> とった こえを つかう</label>
+        </div>
+        <div id="studio-tabs" class="studio-tabs"></div>
+        <input id="studio-search" class="studio-search" type="search" placeholder="🔍 セリフを さがす">
+        <div id="studio-list" class="studio-list"></div>
+        <p id="studio-msg" class="studio-msg" aria-live="polite"></p>
+        <div class="studio-foot">
+          <button id="studio-ask" class="btn btn-soft">📨 えらんだ セリフを LINEで たのむ</button>
+          <button id="studio-send" class="btn btn-go">📤 とった こえを おくる</button>
+          <label class="btn btn-soft studio-import">📥 こえを よみこむ<input id="studio-file" type="file" accept=".pdf,application/pdf,.txt,.json,text/plain,application/json" hidden></label>
+        </div>
+      </div>
+      <!-- こえパックの なにを いれるか えらぶ -->
+      <div id="import-dialog" class="import-dialog">
+        <div class="panel panel-wide">
+          <div class="studio-title imp-title">📥 こえパック</div>
+          <p class="imp-lead">いれる セリフに ✓ を つけてね。▶ で きいて たしかめられるよ</p>
+          <div class="imp-body"></div>
+          <div class="cloud-btns">
+            <button id="imp-ok" class="btn btn-go">いれる</button>
+            <button id="imp-cancel" class="btn btn-soft">やめる</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/voicebox.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/slime.js"></script>
+  <script src="js/cloud-config.js"></script>
+  <script src="js/cloud.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/studio.js"></script>
+</body>
+</html>

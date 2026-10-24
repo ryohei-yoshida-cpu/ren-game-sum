@@ -1,0 +1,326 @@
+[
+ {
+  "who": "narr",
+  "text": "いち"
+ },
+ {
+  "who": "narr",
+  "text": "に"
+ },
+ {
+  "who": "narr",
+  "text": "さん"
+ },
+ {
+  "who": "narr",
+  "text": "よん"
+ },
+ {
+  "who": "narr",
+  "text": "ご"
+ },
+ {
+  "who": "narr",
+  "text": "ろく"
+ },
+ {
+  "who": "narr",
+  "text": "なな"
+ },
+ {
+  "who": "narr",
+  "text": "はち"
+ },
+ {
+  "who": "narr",
+  "text": "きゅう"
+ },
+ {
+  "who": "narr",
+  "text": "じゅう"
+ },
+ {
+  "who": "narr",
+  "text": "じゅういち"
+ },
+ {
+  "who": "narr",
+  "text": "じゅうに"
+ },
+ {
+  "who": "narr",
+  "text": "じゅうさん"
+ },
+ {
+  "who": "narr",
+  "text": "じゅうよん"
+ },
+ {
+  "who": "narr",
+  "text": "じゅうご"
+ },
+ {
+  "who": "narr",
+  "text": "じゅうろく"
+ },
+ {
+  "who": "narr",
+  "text": "じゅうなな"
+ },
+ {
+  "who": "narr",
+  "text": "じゅうはち"
+ },
+ {
+  "who": "narr",
+  "text": "じゅうきゅう"
+ },
+ {
+  "who": "narr",
+  "text": "にじゅう"
+ },
+ {
+  "who": "narr",
+  "text": "たす"
+ },
+ {
+  "who": "narr",
+  "text": "は？"
+ },
+ {
+  "who": "narr",
+  "text": "すらいむ たしたし"
+ },
+ {
+  "who": "narr",
+  "text": "もういちど きいてね"
+ },
+ {
+  "who": "narr",
+  "text": "すごい！"
+ },
+ {
+  "who": "narr",
+  "text": "やったね！"
+ },
+ {
+  "who": "narr",
+  "text": "ぴったり！"
+ },
+ {
+  "who": "narr",
+  "text": "せいかい！"
+ },
+ {
+  "who": "narr",
+  "text": "クリア！"
+ },
+ {
+  "who": "narr",
+  "text": "あたらしい ぶきを てにいれた！"
+ },
+ {
+  "who": "narr",
+  "text": "ボスが あらわれた！"
+ },
+ {
+  "who": "narr",
+  "text": "せんを なぞって こうげきだ！"
+ },
+ {
+  "who": "narr",
+  "text": "やっつけた！"
+ },
+ {
+  "who": "narr",
+  "text": "ぜんぶ クリア！ すらいむ マスターだ！"
+ },
+ {
+  "who": "narr",
+  "text": "きょうも がんばったね。また あしたね！"
+ },
+ {
+  "who": "narr",
+  "text": "いちの だん"
+ },
+ {
+  "who": "narr",
+  "text": "にの だん"
+ },
+ {
+  "who": "narr",
+  "text": "さんの だん"
+ },
+ {
+  "who": "narr",
+  "text": "よんの だん"
+ },
+ {
+  "who": "narr",
+  "text": "ごの だん"
+ },
+ {
+  "who": "narr",
+  "text": "ろくの だん"
+ },
+ {
+  "who": "narr",
+  "text": "ななの だん"
+ },
+ {
+  "who": "narr",
+  "text": "はちの だん"
+ },
+ {
+  "who": "narr",
+  "text": "きゅうの だん"
+ },
+ {
+  "who": "narr",
+  "text": "じゅうの だん"
+ },
+ {
+  "who": "narr",
+  "text": "ぼう"
+ },
+ {
+  "who": "narr",
+  "text": "きの けん"
+ },
+ {
+  "who": "narr",
+  "text": "ハンマー"
+ },
+ {
+  "who": "narr",
+  "text": "トゲトゲ こんぼう"
+ },
+ {
+  "who": "narr",
+  "text": "ぎんの けん"
+ },
+ {
+  "who": "narr",
+  "text": "おおきな おの"
+ },
+ {
+  "who": "narr",
+  "text": "こおりの やり"
+ },
+ {
+  "who": "narr",
+  "text": "ほのおの けん"
+ },
+ {
+  "who": "narr",
+  "text": "かみなりの ハンマー"
+ },
+ {
+  "who": "narr",
+  "text": "にじいろの けん"
+ },
+ {
+  "who": "narr",
+  "text": "ゴロゴロン"
+ },
+ {
+  "who": "narr",
+  "text": "ドラゴラン"
+ },
+ {
+  "who": "narr",
+  "text": "まおうスライム"
+ },
+ {
+  "who": "slime",
+  "text": "ぷにっ"
+ },
+ {
+  "who": "slime",
+  "text": "わーい！"
+ },
+ {
+  "who": "slime",
+  "text": "えいっ！"
+ },
+ {
+  "who": "slime",
+  "text": "やあっ！"
+ },
+ {
+  "who": "slime",
+  "text": "とりゃー！"
+ },
+ {
+  "who": "slime",
+  "text": "それっ！"
+ },
+ {
+  "who": "slime",
+  "text": "いけー！"
+ },
+ {
+  "who": "boss",
+  "text": "ゴロゴロ〜！ ここは とおさないぞ！"
+ },
+ {
+  "who": "boss",
+  "text": "いてっ！"
+ },
+ {
+  "who": "boss",
+  "text": "ゴロッ！？"
+ },
+ {
+  "who": "boss",
+  "text": "まいった〜！ ゴロゴロ〜"
+ },
+ {
+  "who": "boss",
+  "text": "ガオー！ おれさまは つよいぞ！"
+ },
+ {
+  "who": "boss",
+  "text": "いてて！"
+ },
+ {
+  "who": "boss",
+  "text": "ガオッ！？"
+ },
+ {
+  "who": "boss",
+  "text": "やるな！"
+ },
+ {
+  "who": "boss",
+  "text": "ガオ〜ん… まいった〜！"
+ },
+ {
+  "who": "boss",
+  "text": "ふっふっふ… わがはいが まおうスライムだ！"
+ },
+ {
+  "who": "boss",
+  "text": "ぐぬっ！"
+ },
+ {
+  "who": "boss",
+  "text": "いたた！"
+ },
+ {
+  "who": "boss",
+  "text": "なにっ！？"
+ },
+ {
+  "who": "boss",
+  "text": "まだまだ！"
+ },
+ {
+  "who": "boss",
+  "text": "ぐぬぬ…！"
+ },
+ {
+  "who": "boss",
+  "text": "うわ〜！ まいった〜！ なかよく しよう〜！"
+ }
+]
