@@ -3,12 +3,12 @@
 
   const SAVE_KEY = 'slime-tashitashi-v1';
   const $ = s => document.querySelector(s);
-  const { NUM, STAGES, WEAPONS, PATHS, BOSSES, PRAISE, SLIME_CRY, Sound, Slime } = window;
+  const { NUM, STAGES, WEAPONS, PATHS, BOSS_AT, bossFor, PRAISE, SLIME_CRY, Sound, Slime } = window;
   const QUESTIONS = 10;    // 1の だんは 1+1 〜 1+10
-  // リズム（びょう）
-  const HIT = 0.26;        // 「たったった」の 1つぶん
-  const GAP = 0.42;        // 「1」「たす」「1」「は？」の あいだ
-  const MERGE = 0.27;      // がったいの「た」1つぶん
+  // リズム（びょう）。こどもが「いち、に、さん」と かぞえられる はやさ
+  const HIT = 0.55;        // 「たったった」の 1つぶん
+  const GAP = 0.75;        // 「1」「たす」「1」「は？」の あいだ
+  const MERGE = 0.5;       // がったいの「た」1つぶん
 
   // ---------- セーブ ----------
   //   cleared: クリアした だん / plays: だんごとの クリア かいすう / weapon: もっている ぶき（0 は なし）
@@ -73,7 +73,7 @@
     map.innerHTML = STAGES.map(s => {
       const open = isOpen(s.n), done = save.cleared.includes(s.n);
       return `<button class="stage-btn${open ? '' : ' locked'}${done ? ' done' : ''}" data-n="${s.n}" style="--c:${s.color}"${open ? '' : ' disabled'}>` +
-        `<b>${s.n}</b><small>の だん</small>${BOSSES[s.n] ? '<i class="sb-boss">👑</i>' : ''}${done ? '<i class="sb-star">⭐</i>' : ''}${open ? '' : '<i class="sb-lock">🔒</i>'}</button>`;
+        `<b>${s.n}</b><small>の だん</small>${done ? '<i class="sb-star">⭐</i>' : ''}${open ? '' : '<i class="sb-lock">🔒</i>'}</button>`;
     }).join('');
     map.querySelectorAll('.stage-btn').forEach(b => {
       b.onclick = () => { Sound.unlock(); Sound.tap(); startStage(Number(b.dataset.n)); };
@@ -132,7 +132,7 @@
 
   function renderProgress() {
     $('#progress').innerHTML = Array.from({ length: QUESTIONS }, (_, i) =>
-      `<i class="pdot${i < qi ? ' done' : ''}${i === qi ? ' now' : ''}"></i>`).join('');
+      `<i class="pdot${i < qi ? ' done' : ''}${i === qi ? ' now' : ''}">${BOSS_AT.includes(i + 1) ? '<b>👑</b>' : ''}</i>`).join('');
   }
 
   function resetField() {
@@ -318,11 +318,11 @@
     await wait(1700);
     qi++;
     renderProgress();
-    if (qi < QUESTIONS) {
-      nextQuestion();
-    } else if (BOSSES[stage]) {
+    if (BOSS_AT.includes(qi)) {
       await wait(400);
       startBoss();
+    } else if (qi < QUESTIONS) {
+      nextQuestion();
     } else {
       await wait(300);
       clearStage();
@@ -344,7 +344,7 @@
 
   async function startBoss() {
     epoch++;
-    const def = BOSSES[stage];
+    const def = bossFor(stage, qi);
     boss = { def, hp: def.hits, pi: 0 };
     $('#boss-label').textContent = def.name;
     renderHP();
@@ -506,7 +506,13 @@
     hero.className = 'hero jump';
     Sound.say('わーい！', { who: 'slime' });
     await wait(1800);
-    clearStage();
+    if (qi < QUESTIONS) {
+      // つぎの もんだいへ
+      show('screen-play');
+      nextQuestion();
+    } else {
+      clearStage();
+    }
   }
 
   // ---------- クリア ----------
@@ -694,7 +700,7 @@
   window.__game = {
     get save() { return save; },
     get q() { return q; },
-    startStage, startBoss: n => { stage = n; startBoss(); }, clearStage: n => { stage = n; clearStage(); },
+    startStage, startBoss: (n, qn = 10) => { stage = n; qi = qn; startBoss(); }, clearStage: n => { stage = n; clearStage(); },
     trace: () => tr,
   };
 

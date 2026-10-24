@@ -117,21 +117,42 @@
     tri: 'M50 14 L86 80 L14 80 Z',
   };
 
-  // ボス（3・6・10の だんの さいご）
+  // ボス（どの だんも 5もんめ と 10もんめ の あとに でてくる）
+  //   5もんめ: ゴロゴロン（きすうの だん）/ オバケン（ぐうすうの だん）。3かい なぞる
+  //   10もんめ: ドラゴラン（10の だんだけ まおうスライム）。5かい なぞる
   const BOSSES = {
-    3: {
-      name: 'ゴロゴロン', color: '#a3acb8', deco: 'rock', hits: 2, paths: ['slash', 'arc'],
+    rock: {
+      name: 'ゴロゴロン', color: '#a3acb8', deco: 'rock',
       enter: 'ゴロゴロ〜！ ここは とおさないぞ！', ouch: ['いてっ！', 'ゴロッ！？'], lose: 'まいった〜！ ゴロゴロ〜',
     },
-    6: {
-      name: 'ドラゴラン', color: '#5fcf7a', deco: 'dragon', hits: 3, paths: ['v', 's', 'zig'],
+    ghost: {
+      name: 'オバケン', color: '#cfc6ff', deco: 'ghost',
+      enter: 'ひゅ〜 どろどろ〜！ おどろいたか〜！', ouch: ['ひゃっ！', 'ひゅっ！？', 'うひゃ〜！'], lose: 'ひゅ〜… まいった〜！',
+    },
+    dragon: {
+      name: 'ドラゴラン', color: '#5fcf7a', deco: 'dragon',
       enter: 'ガオー！ おれさまは つよいぞ！', ouch: ['いてて！', 'ガオッ！？', 'やるな！'], lose: 'ガオ〜ん… まいった〜！',
     },
-    10: {
-      name: 'まおうスライム', color: '#9a6be0', deco: 'king', hits: 5, paths: ['bolt', 'wave', 'mountain', 'circle', 'tri'],
+    king: {
+      name: 'まおうスライム', color: '#9a6be0', deco: 'king',
       enter: 'ふっふっふ… わがはいが まおうスライムだ！', ouch: ['ぐぬっ！', 'いたた！', 'なにっ！？', 'まだまだ！', 'ぐぬぬ…！'], lose: 'うわ〜！ まいった〜！ なかよく しよう〜！',
     },
   };
+  const BOSS_AT = [5, 10];   // なんもんめの あとに でるか
+  const EASY = ['slash', 'arc', 'v', 's', 'zig'];
+  const HARD = ['bolt', 'wave', 'mountain', 'circle', 'tri', 'zig', 's'];
+  // n の だんの qn もんめの ボス → { ...ボス, hits: なぞる かいすう, paths }
+  function bossFor(n, qn) {
+    const end = qn >= 10;
+    const def = end ? (n >= 10 ? BOSSES.king : BOSSES.dragon) : (n % 2 ? BOSSES.rock : BOSSES.ghost);
+    const hits = end ? 5 : 3;
+    const pool = [...(end ? HARD : EASY)];
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    return { ...def, hits, paths: pool.slice(0, hits) };
+  }
 
   const PRAISE = ['すごい！', 'やったね！', 'ぴったり！', 'せいかい！'];
   const SLIME_CRY = ['えいっ！', 'やあっ！', 'とりゃー！', 'それっ！', 'いけー！'];
@@ -150,5 +171,5 @@
   ['ぷにっ', 'わーい！', ...SLIME_CRY].forEach(t => add('slime', t));
   Object.values(BOSSES).forEach(b => [b.enter, ...b.ouch, b.lose].forEach(t => add('boss', t)));
 
-  Object.assign(window, { NUM, STAGES, WEAPONS, PATHS, BOSSES, PRAISE, SLIME_CRY, LINES });
+  Object.assign(window, { NUM, STAGES, WEAPONS, PATHS, BOSSES, BOSS_AT, bossFor, PRAISE, SLIME_CRY, LINES });
 })();

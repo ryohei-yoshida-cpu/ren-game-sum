@@ -50,6 +50,10 @@ window.Slime = (() => {
       back = `<path d="M8 50 Q-8 30 4 18 Q8 34 20 40 Z M92 50 Q108 30 96 18 Q92 34 80 40 Z" fill="#ffb3c7" stroke="#d6336c" stroke-width="2" stroke-linejoin="round"/>` +
         `<path d="M32 24 L26 4 L42 18 Z M68 24 L74 4 L58 18 Z" fill="#fff3bf" stroke="#c9a227" stroke-width="2" stroke-linejoin="round"/>`;
       front = `<path d="M42 18 L46 10 L50 17 L54 10 L58 18" fill="${c2}"/>`;
+    } else if (b.deco === 'ghost') {
+      back = `<path d="M10 62 Q-6 56 -2 44 M90 62 Q106 56 102 44" stroke="${c2}" stroke-width="5" fill="none" stroke-linecap="round"/>` +
+        `<path d="M96 18 q4 -6 8 0 q4 6 8 0 M-12 26 q4 -6 8 0 q4 6 8 0" stroke="#b5a8f0" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+      front = `<path d="M46 77 Q50 88 54 77 Z" fill="#ff8fab" stroke="#c9496e" stroke-width="1.5"/>`;
     } else if (b.deco === 'king') {
       back = `<path d="M6 60 Q0 96 30 96 L70 96 Q100 96 94 60 Q90 80 50 82 Q10 80 6 60 Z" fill="#c92a2a" stroke="#7a1414" stroke-width="2"/>`;
       front = `<path d="M32 22 L30 2 L42 12 L50 -2 L58 12 L70 2 L68 22 Z" fill="url(#wp-gold)" stroke="#a87400" stroke-width="2" stroke-linejoin="round"/>` +
