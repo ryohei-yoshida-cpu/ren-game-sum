@@ -313,6 +313,12 @@ window.Sound = (() => {
       noise(t, 0.2, { vol: 0.5, type: 'lowpass', freq: 700 });
       kick(sec, 0.9);
     },
+    // きせきの ちから（キラキラ）
+    miracle(sec = 0) {
+      [84, 88, 91, 96, 100, 103].forEach((m, i) => tone(midi(m), sec + i * 0.07, 0.5, { type: 'sine', vol: 0.12 }));
+      [72, 76, 79, 84].forEach(m => tone(midi(m), sec + 0.5, 1.4, { type: 'triangle', vol: 0.09 }));
+      noise(at(sec), 1.2, { vol: 0.12, type: 'highpass', freq: 7000 });
+    },
     // まけちゃった
     lose(sec = 0) {
       [67, 66, 65, 64].forEach((m, i) => tone(midi(m), sec + i * 0.38, i === 3 ? 1.0 : 0.34, { type: 'triangle', vol: 0.14, slide: i === 3 ? 0.9 : 0 }));

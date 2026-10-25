@@ -6,6 +6,7 @@
   const { NUM, STAGES, WEAPONS, PATHS, BOSS_AT, bossFor, PRAISE, SLIME_CRY, Sound, Slime } = window;
   const QUESTIONS = 10;    // 1の だんは 1+1 〜 1+10
   const MAX_HP = 10;       // ボスに 10かい こうげき されたら まけ
+  const MIRACLES = 2;      // HP が なくなっても、だんごとに 2かいまで「きせきの ちから」で ふっかつ
   const LANE = 96;         // フィールドの うえの ボスの いる ところ（css の --lane）
   // リズム（びょう）。こどもが「いち、に、さん」と かぞえられる はやさ
   const HIT = 0.55;        // 「たったった」の 1つぶん
@@ -109,6 +110,7 @@
   let q = null;       // { a, b, ans, choices }
   let locked = true;
   let myHp = MAX_HP;  // すらいむの HP（その だんを クリアするまで へった まま）
+  let miracles = MIRACLES;   // のこりの ふっかつ
   let foe = null;     // いま でている ボス（1〜5もんめ と 6〜10もんめ で かわる）
 
   function startStage(n) {
@@ -117,6 +119,7 @@
     stage = n;
     qi = 0;
     myHp = MAX_HP;
+    miracles = MIRACLES;
     foe = null;
     $('#foe').className = 'foe';
     renderMyHP();
@@ -166,7 +169,8 @@
   function renderMyHP(broke = -1) {
     const bar = `<div class="hp-bar${myHp <= 3 ? ' danger' : myHp <= 6 ? ' low' : ''}">` +
       Array.from({ length: MAX_HP }, (_, i) => `<i class="${i < myHp ? '' : 'gone'}${i === broke ? ' break' : ''}"></i>`).join('') + '</div>';
-    $('#my-hp').innerHTML = `<i class="hp-ic">❤️</i>${bar}`;
+    const mir = `<span class="miracle" aria-label="ふっかつ のこり ${miracles}">${'💖'.repeat(miracles)}${'🤍'.repeat(MIRACLES - miracles)}</span>`;
+    $('#my-hp').innerHTML = `<i class="hp-ic">❤️</i>${bar}${mir}`;
   }
 
   // ボスを だす（はじめて でる ときは なまえと セリフ）
@@ -282,6 +286,16 @@
   }
   $('#btn-again').onclick = () => { if (!locked) present(); };
 
+  // こたえの ならびを かえて もういちど えらべるように
+  function reshuffle() {
+    const before = q.choices.join();
+    do shuffle(q.choices); while (q.choices.join() === before);
+    const box = $('#choices');
+    box.innerHTML = q.choices.map(x => `<button class="choice plain" data-v="${x}">${x}</button>`).join('');
+    box.querySelectorAll('.choice').forEach(b => { b.onclick = () => answer(Number(b.dataset.v), b); });
+    locked = false;
+  }
+
   function answer(v, btn) {
     if (locked) return;
     if (v !== q.ans) {
@@ -291,14 +305,7 @@
       btn.classList.add('no');
       foeAttack();
       if (myHp <= 0) return;
-      later(1.1, () => {
-        const before = q.choices.join();
-        do shuffle(q.choices); while (q.choices.join() === before);
-        const box = $('#choices');
-        box.innerHTML = q.choices.map(x => `<button class="choice plain" data-v="${x}">${x}</button>`).join('');
-        box.querySelectorAll('.choice').forEach(b => { b.onclick = () => answer(Number(b.dataset.v), b); });
-        locked = false;
-      });
+      later(1.1, reshuffle);
       return;
     }
     locked = true;
@@ -424,10 +431,38 @@
     later(0.9, () => { if (foe) el.className = 'foe show idle'; field.classList.remove('hurt'); });
     myHp = Math.max(0, myHp - 1);
     later(0.42, () => renderMyHP(myHp));
-    if (myHp <= 0) guard(wait(1300).then(lose));
+    if (myHp <= 0) guard(wait(1300).then(miracles > 0 ? revive : lose));
   }
 
-  // HP が なくなった: その だんの さいしょから
+  // HP が なくなった → ハートが ふってきて「きせきの ちから」で ぜんかいふく（だんごとに 2かいまで）
+  async function revive() {
+    miracles--;
+    const fx = document.createElement('div');
+    fx.className = 'heart-rain';
+    fx.innerHTML = Array.from({ length: 18 }, (_, i) =>
+      `<i style="left:${(i * 37 + 7) % 96}%;animation-delay:${(i % 6) * 0.15 + Math.floor(i / 6) * 0.1}s;font-size:${22 + (i * 13) % 22}px">${i % 3 ? '💗' : '💖'}</i>`).join('') +
+      '<div class="miracle-msg">✨ きせきの ちからで ふっかつした！ ✨</div>';
+    $('#screen-play').appendChild(fx);
+    Sound.miracle();
+    Sound.say('きせきの ちからで ふっかつした！');
+    if (foe) $('#foe').className = 'foe show hit';
+    await wait(900);
+    // HP が 1つずつ もどる（リズムよく）
+    for (let i = 0; i < MAX_HP; i++) {
+      myHp = i + 1;
+      renderMyHP();
+      Sound.blip(i % 5, 0);
+      await wait(110);
+    }
+    document.querySelectorAll('.group .slime').forEach(s => s.classList.add('boing'));
+    Sound.say('わーい！', { who: 'slime' });
+    await wait(1500);
+    fx.remove();
+    if (foe) $('#foe').className = 'foe show idle';
+    reshuffle();
+  }
+
+  // ふっかつも つかいきって HP が なくなった: その だんの さいしょから
   function lose() {
     epoch++;
     locked = true;
@@ -812,7 +847,8 @@
     get save() { return save; },
     get q() { return q; },
     startStage, startBoss: (n, qn = 10) => { stage = n; qi = qn; foe = null; startBoss(); },
-    get hp() { return myHp; }, clearStage: n => { stage = n; clearStage(); },
+    get hp() { return myHp; },
+    get miracles() { return miracles; }, clearStage: n => { stage = n; clearStage(); },
     trace: () => tr,
   };
 
