@@ -258,7 +258,7 @@ button { font-family: inherit; color: inherit; cursor: pointer; }
 .merged.done .m-num { opacity: 1; font-size: clamp(36px, 10vw, 54px); animation: slotIn .4s cubic-bezier(.3, 1.8, .5, 1); }
 .merged.done .slime.big .sl-in { animation: happy .5s ease-in-out 3; }
 @keyframes happy { 0%, 100% { transform: none; } 50% { transform: translateY(-10%) scale(.95, 1.06); } }
-.start { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 3; }
+.start { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 3; white-space: nowrap; }
 .start:active { transform: translate(-50%, -46%); }
 
 .choices { display: flex; gap: clamp(10px, 4vw, 22px); justify-content: center; min-height: 104px; align-items: center; }
